@@ -1,7 +1,8 @@
 #include "Value.h"
 #include <memory>
+#include <string>
 
-Value::Value(double valueIn, const std::vector<std::shared_ptr<Value>> &prevIn,
+Value::Value(double valueIn, const std::vector<ValuePtr> &prevIn,
              OPERATION operationIn)
     : value(valueIn), prev(prevIn), operation(operationIn) {}
 
@@ -13,8 +14,6 @@ std::string Value::enumToString(OPERATION operationIn) const {
     return "ADD";
   case MULT:
     return "MULT";
-  case SUB:
-    return "SUB";
   case NEG:
     return "NEG";
   case NONE:
@@ -25,9 +24,9 @@ std::string Value::enumToString(OPERATION operationIn) const {
 std::string Value::getString() const {
   std::string final = "";
   final += "[VAL=" + std::to_string(value) + ":OP=" + enumToString(operation) +
-           ":PREV= (";
+           ":GRAD=" + std::to_string(gradient) + ":PREV= (";
 
-  for (ValuePtr ptr : prev) {
+  for (ValuePtr &ptr : prev) {
     final += ptr->getString();
   }
   final += ")]";
@@ -45,9 +44,6 @@ void Value::forwardPass() {
     break;
   case MULT:
     value = prev[0]->value * prev[1]->value;
-    break;
-  case SUB:
-    value = prev[0]->value - prev[1]->value;
     break;
   case NEG:
     value = -prev[0]->value;

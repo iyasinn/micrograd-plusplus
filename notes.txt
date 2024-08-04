@@ -3,3 +3,29 @@
 Generation command
 
 alias nn='clear && make clean && make nn && ./nn'
+
+
+
+
+
+d/da * [a + b]
+1 + 0
+
+
+// inline ValuePtr operator*(const ValuePtr &lhs, double rhs) {
+//   return lhs * Value::create(rhs);
+// }
+
+// inline ValuePtr operator*(double lhs, const ValuePtr &rhs) {
+//   return Value::create(lhs) * rhs;
+// }
+
+
+// inline ValuePtr operator+(const ValuePtr &lhs, const double &rhs) {
+// return lhs + Value::create(rhs);
+// }
+
+// inline ValuePtr operator+(const double &lhs, const ValuePtr &rhs) {
+
+//   return Value::create(lhs) + rhs;
+// }
