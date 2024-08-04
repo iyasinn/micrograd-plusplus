@@ -15,26 +15,7 @@ public:
     return std::shared_ptr<Value>(new Value(valueIn));
   }
 
-  void forwardPass() {
-
-    for (auto &p : prev) {
-      p->forwardPass();
-    }
-
-    switch (operation) {
-    case ADD:
-      value = prev[0]->value + prev[1]->value;
-      break;
-    case MULT:
-      value = prev[0]->value * prev[1]->value;
-      break;
-    case SUB:
-      value = prev[0]->value - prev[1]->value;
-      break;
-    case NONE:
-      break;
-    }
-  }
+  void forwardPass();
 
   std::string getString() const;
 
@@ -43,7 +24,7 @@ public:
   void setValue(double valueIn) { value = valueIn; }
 
 private:
-  enum OPERATION { ADD, MULT, SUB, NONE };
+  enum OPERATION { ADD, MULT, SUB, NEG, NONE };
   Value(double valueIn);
   Value(double valueIn, const std::vector<ValuePtr> &prevIn,
         OPERATION operationIn);
@@ -57,7 +38,12 @@ private:
   OPERATION operation = NONE;
 
   friend ValuePtr operator+(const ValuePtr &lhs, const ValuePtr &rhs);
-};
+  friend ValuePtr operator*(const ValuePtr &lhs, const ValuePtr &rhs);
+
+  friend ValuePtr operator-(const ValuePtr &x);
+}; // * class Value
+
+// ! ----------------- OPERATOR OVERLOADS -----------------
 
 inline ValuePtr operator+(const ValuePtr &lhs, const ValuePtr &rhs) {
   return std::shared_ptr<Value>(
@@ -71,6 +57,15 @@ inline ValuePtr operator+(const ValuePtr &lhs, const double &rhs) {
 inline ValuePtr operator+(const double &lhs, const ValuePtr &rhs) {
 
   return Value::create(lhs) + rhs;
+}
+
+inline ValuePtr operator*(const ValuePtr &lhs, const ValuePtr &rhs) {
+  return std::shared_ptr<Value>(
+      new Value(lhs->value * rhs->value, {lhs, rhs}, Value::MULT));
+}
+
+inline ValuePtr operator-(const ValuePtr &x) {
+  return std::shared_ptr<Value>(new Value(x->value * -1, {x}, Value::NEG));
 }
 
 inline std::ostream &operator<<(std::ostream &os, ValuePtr other) {
