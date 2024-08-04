@@ -2,18 +2,14 @@
 
 using namespace std;
 
-ValuePtr Constant(double value) { return Value::create(value); }
+ValuePtr Val(double value) { return Value::create(value); }
 
 int main() {
 
-  const auto a = Constant(10);
-  const auto b = Constant(20);
+  const auto a = Val(100);
+  const auto b = Val(25);
 
-  auto c = a + b;
-
-  cout << c;
+  auto c = a / b;
 
   c->startBackpropagation();
-
-  cout << c;
 }

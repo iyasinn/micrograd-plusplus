@@ -17,8 +17,8 @@ std::string Value::enumToString(OPERATION operationIn) const {
     return "MULT";
   case NEG:
     return "NEG";
-  case EXP:
-    return "EXP";
+  case POW:
+    return "POW";
   case NONE:
     return "NONE";
   }
@@ -51,7 +51,7 @@ void Value::forwardPass() {
   case NEG:
     value = -prev[0]->value;
     break;
-  case EXP:
+  case POW:
     value = std::pow(prev[0]->value, prev[1]->value);
   case NONE:
     break;
@@ -70,9 +70,11 @@ void Value::backpropagation() {
   case NEG:
     prev[0]->gradient += (-1 * gradient);
     break;
-  case EXP:
-    // TODO: Fix it
-    prev[0]->gradient = 1;
+  case POW:
+    // TODO: Only works when power is constant
+    prev[0]->gradient +=
+        (prev[1]->value * std::pow(prev[0]->value, prev[1]->value - 1) *
+         gradient);
   case NONE:
     break;
   }
