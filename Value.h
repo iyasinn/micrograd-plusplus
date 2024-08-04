@@ -52,6 +52,7 @@ private:
 
   // * Member Variables
   double value;
+  //   double gradient;
   std::vector<ValuePtr> prev = {};
   OPERATION operation = NONE;
 
@@ -61,6 +62,15 @@ private:
 inline ValuePtr operator+(const ValuePtr &lhs, const ValuePtr &rhs) {
   return std::shared_ptr<Value>(
       new Value(lhs->value + rhs->value, {lhs, rhs}, Value::ADD));
+}
+
+inline ValuePtr operator+(const ValuePtr &lhs, const double &rhs) {
+  return lhs + Value::create(rhs);
+}
+
+inline ValuePtr operator+(const double &lhs, const ValuePtr &rhs) {
+
+  return Value::create(lhs) + rhs;
 }
 
 inline std::ostream &operator<<(std::ostream &os, ValuePtr other) {

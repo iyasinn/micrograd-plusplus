@@ -5,9 +5,9 @@ using namespace std;
 int main() {
 
   auto a = Value::create(5);
-  auto b = Value::create(6);
+  auto b = Value::create(10);
 
-  auto c = a + b;
+  auto c = a + a;
 
   cout << c;
 
