@@ -1,0 +1,5 @@
+
+
+Generation command
+
+alias nn='clear && make clean && make nn && ./nn'
