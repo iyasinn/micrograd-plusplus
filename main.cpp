@@ -16,6 +16,4 @@ int main() {
   c->startBackpropagation();
 
   cout << c;
-
-  //   cout << c;
 }

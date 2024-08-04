@@ -1,4 +1,5 @@
 #include "Value.h"
+#include <cmath>
 #include <memory>
 #include <string>
 
@@ -16,6 +17,8 @@ std::string Value::enumToString(OPERATION operationIn) const {
     return "MULT";
   case NEG:
     return "NEG";
+  case EXP:
+    return "EXP";
   case NONE:
     return "NONE";
   }
@@ -48,7 +51,39 @@ void Value::forwardPass() {
   case NEG:
     value = -prev[0]->value;
     break;
+  case EXP:
+    value = std::pow(prev[0]->value, prev[1]->value);
   case NONE:
     break;
+  }
+}
+void Value::backpropagation() {
+  switch (operation) {
+  case ADD:
+    prev[0]->gradient += gradient;
+    prev[1]->gradient += gradient;
+    break;
+  case MULT:
+    prev[0]->gradient += prev[1]->value * gradient;
+    prev[1]->gradient += prev[0]->value * gradient;
+    break;
+  case NEG:
+    prev[0]->gradient += (-1 * gradient);
+    break;
+  case EXP:
+    // TODO: Fix it
+    prev[0]->gradient = 1;
+  case NONE:
+    break;
+  }
+
+  for (auto p : prev) {
+    p->backpropagation();
+  }
+}
+void Value::zeroGradients() {
+  gradient = 0;
+  for (auto p : prev) {
+    p->zeroGradients();
   }
 }

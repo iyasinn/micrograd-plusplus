@@ -23,45 +23,23 @@ public:
 
   void setValue(double valueIn) { value = valueIn; }
 
-  void zeroGradients() {
-    gradient = 0;
-    for (auto p : prev) {
-      p->zeroGradients();
-    }
-  }
+  void zeroGradients();
 
+  void setGradientToOne() { gradient = 1; }
+
+  // * Does not zero the gradients
+  void backpropagation();
+
+  // * Does all important steps for backpropagation
   void startBackpropagation() {
     zeroGradients();
     setGradientToOne();
     backpropagation();
   }
 
-  void setGradientToOne() { gradient = 1; }
-
-  // * Does not zero the gradients
-  void backpropagation() {
-    switch (operation) {
-    case ADD:
-      prev[0]->gradient += gradient;
-      prev[1]->gradient += gradient;
-      break;
-    case MULT:
-      prev[0]->gradient += prev[1]->value * gradient;
-      prev[1]->gradient += prev[0]->value * gradient;
-      break;
-    case NEG:
-      prev[0]->gradient += -1;
-    case NONE:
-      break;
-    }
-
-    for (auto p : prev) {
-      p->backpropagation();
-    }
-  }
-
 private:
-  enum OPERATION { ADD, MULT, NEG, NONE };
+  enum OPERATION { ADD, MULT, NEG, EXP, NONE };
+
   Value(double valueIn);
   Value(double valueIn, const std::vector<ValuePtr> &prevIn,
         OPERATION operationIn);
