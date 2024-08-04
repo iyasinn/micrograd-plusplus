@@ -58,7 +58,7 @@ CXX         = g++
 
 # rule for creating objects
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $*.cpp
+	$(CXX) $(CXXFLAGS) -g -c $*.cpp
 
 # list of test drivers (with main()) for development
 TESTSOURCES = $(wildcard test*.cpp)

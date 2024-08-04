@@ -1,21 +1,33 @@
-#include "Value.h"
-
+#include "Neuron.h"
+// #include "Value.h"
 using namespace std;
+
+ValuePtr Val(double value) { return Value::create(value); }
 
 int main() {
 
-  auto a = Value::create(5);
-  auto b = Value::create(6);
+  const auto a = Val(100);
+  const auto b = Val(25);
 
-  auto c = a + b;
+  size_t len = 3;
 
-  cout << c;
+  Neuron n(len);
+  vector<double> inputs = {3, 5, 7};
+  ValuePtr output = n.call(inputs);
 
-  a->setValue(a->getValue() + 10);
+  for (size_t i = 0; i < n.getWeights().size(); i++) {
+    cout << i << ": " << n.getWeights()[i]->getValue() << " "
+         << n.getWeights()[i]->getGradient() << endl;
+  }
 
-  cout << c;
+  cout << "\n\n\n" << output->getValue() << "\n\n\n";
 
-  c->forwardPass();
+  output->startBackpropagation();
 
-  cout << c;
+  for (size_t i = 0; i < n.getWeights().size(); i++) {
+    cout << n.getWeights()[i]->getValue() << " "
+         << n.getWeights()[i]->getGradient() << endl;
+  }
+
+  cout << output;
 }

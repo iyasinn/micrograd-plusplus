@@ -1,11 +1,12 @@
 #include <array>
+#include <cmath>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
 
 class Value;
-using ValuePtr = std::shared_ptr<Value>;
+using ValuePtr = const std::shared_ptr<Value>;
 
 class Value {
 
@@ -15,35 +16,35 @@ public:
     return std::shared_ptr<Value>(new Value(valueIn));
   }
 
-  void forwardPass() {
+  // void forwardPass();
 
-    for (auto &p : prev) {
-      p->forwardPass();
-    }
-
-    switch (operation) {
-    case ADD:
-      value = prev[0]->value + prev[1]->value;
-      break;
-    case MULT:
-      value = prev[0]->value * prev[1]->value;
-      break;
-    case SUB:
-      value = prev[0]->value - prev[1]->value;
-      break;
-    case NONE:
-      break;
-    }
-  }
-
-  std::string getString() const;
+  std::string getString(size_t indent = 0) const;
 
   double getValue() const { return value; }
 
   void setValue(double valueIn) { value = valueIn; }
 
+  double getGradient() const { return gradient; }
+
+  void zeroGradients();
+
+  void setGradientToOne() { gradient = 1; }
+
+  void setGradient(double gradientIn) { gradient = gradientIn; }
+
+  // * Does not zero the gradients
+  void backpropagation();
+
+  // * Does all important steps for backpropagation
+  void startBackpropagation() {
+    zeroGradients();
+    setGradientToOne();
+    backpropagation();
+  }
+
 private:
-  enum OPERATION { ADD, MULT, SUB, NONE };
+  enum OPERATION { ADD, MULT, NEG, POW, RELU, NONE };
+
   Value(double valueIn);
   Value(double valueIn, const std::vector<ValuePtr> &prevIn,
         OPERATION operationIn);
@@ -52,18 +53,52 @@ private:
 
   // * Member Variables
   double value;
+  double gradient;
   std::vector<ValuePtr> prev = {};
   OPERATION operation = NONE;
 
   friend ValuePtr operator+(const ValuePtr &lhs, const ValuePtr &rhs);
-};
+  friend ValuePtr operator*(const ValuePtr &lhs, const ValuePtr &rhs);
+  friend ValuePtr operator-(const ValuePtr &x);
+  friend ValuePtr operator^(ValuePtr lhs, ValuePtr rhs);
+  friend ValuePtr relu(const ValuePtr &x);
+}; // * class Value
+
+// ! ----------------- OPERATOR OVERLOADS -----------------
 
 inline ValuePtr operator+(const ValuePtr &lhs, const ValuePtr &rhs) {
   return std::shared_ptr<Value>(
       new Value(lhs->value + rhs->value, {lhs, rhs}, Value::ADD));
 }
 
+inline ValuePtr operator*(const ValuePtr &lhs, const ValuePtr &rhs) {
+  return std::shared_ptr<Value>(
+      new Value(lhs->value * rhs->value, {lhs, rhs}, Value::MULT));
+}
+
+inline ValuePtr operator^(ValuePtr lhs, ValuePtr rhs) {
+  return std::shared_ptr<Value>(
+      new Value(std::pow(lhs->value, rhs->value), {lhs, rhs}, Value::POW));
+}
+
+inline ValuePtr operator/(const ValuePtr &lhs, const ValuePtr &rhs) {
+  return lhs * (rhs ^ (Value::create(-1)));
+}
+
+inline ValuePtr operator-(const ValuePtr &x) {
+  return std::shared_ptr<Value>(new Value(x->value * -1, {x}, Value::NEG));
+}
+
+inline ValuePtr operator-(const ValuePtr &lhs, const ValuePtr &rhs) {
+  return lhs + (-rhs);
+}
+
 inline std::ostream &operator<<(std::ostream &os, ValuePtr other) {
   os << other.get()->getString() << std::endl;
   return os;
+}
+
+inline ValuePtr relu(const ValuePtr &x) {
+  return std::shared_ptr<Value>(
+      new Value(fmax(-0.00001, x->value), {x}, Value::RELU));
 }
