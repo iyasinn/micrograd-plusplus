@@ -12,4 +12,6 @@ int main() {
   auto c = a / b;
 
   c->startBackpropagation();
+
+  cout << c;
 }

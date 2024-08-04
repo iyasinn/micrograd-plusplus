@@ -18,7 +18,7 @@ public:
 
   void forwardPass();
 
-  std::string getString() const;
+  std::string getString(size_t indent = 0) const;
 
   double getValue() const { return value; }
 

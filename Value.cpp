@@ -1,6 +1,7 @@
 #include "Value.h"
 #include <cmath>
 #include <memory>
+#include <sstream>
 #include <string>
 
 Value::Value(double valueIn, const std::vector<ValuePtr> &prevIn,
@@ -24,17 +25,44 @@ std::string Value::enumToString(OPERATION operationIn) const {
   }
 }
 
-std::string Value::getString() const {
-  std::string final = "";
-  final += "[VAL=" + std::to_string(value) + ":OP=" + enumToString(operation) +
-           ":GRAD=" + std::to_string(gradient) + ":PREV= (";
+// std::string Value::getString(int indent) const {
+//   std::string final = "";
+//   final += "[VAL=" + std::to_string(value) + ":OP=" + enumToString(operation)
+//   +
+//            ":GRAD=" + std::to_string(gradient) + ":\n";
 
-  for (ValuePtr &ptr : prev) {
-    final += ptr->getString();
+//   std::string indentString = std::string(size_t(indent), '\t');
+
+//   final += "PREV= (";
+
+//   for (ValuePtr &ptr : prev) {
+//     final += indentString + ptr->getString(indent + 1) + "\n";
+//   }
+
+//   final += ")]";
+//   return final;
+// }
+
+std::string Value::getString(size_t indent) const {
+  std::ostringstream final;
+  std::string indentString(indent, '\t');
+
+  final << indentString + "- [VAL=" << value
+        << ":OP=" << enumToString(operation) << ":GRAD=" << gradient
+        << ":PREV=(";
+
+  if (!prev.empty()) {
+    for (const ValuePtr &ptr : prev) {
+      final << "\n" << ptr->getString(indent + 1);
+    }
+    final << "\n"
+          << indentString; // Closing the indent before closing the parenthesis
   }
-  final += ")]";
-  return final;
+
+  final << ")]";
+  return final.str();
 }
+
 void Value::forwardPass() {
 
   for (auto &p : prev) {
