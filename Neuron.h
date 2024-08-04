@@ -29,6 +29,8 @@ public:
     }
   }
 
+  const std::vector<ValuePtr> &getWeights() { return weights; }
+
   ValuePtr call(std::vector<double> inputs) {
     assert(inputs.size() == weights.size());
     size_t size = inputs.size();
@@ -39,7 +41,7 @@ public:
       activation = activation + (weights[i] * Value::create(inputs[i]));
     }
 
-    return activation;
+    return relu(activation);
   }
 
 private:

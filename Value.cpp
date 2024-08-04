@@ -20,6 +20,8 @@ std::string Value::enumToString(OPERATION operationIn) const {
     return "NEG";
   case POW:
     return "POW";
+  case RELU:
+    return "RELU";
   case NONE:
     return "NONE";
   }
@@ -63,28 +65,32 @@ std::string Value::getString(size_t indent) const {
   return final.str();
 }
 
-void Value::forwardPass() {
+// void Value::forwardPass() {
 
-  for (auto &p : prev) {
-    p->forwardPass();
-  }
+//   for (auto &p : prev) {
+//     p->forwardPass();
+//   }
 
-  switch (operation) {
-  case ADD:
-    value = prev[0]->value + prev[1]->value;
-    break;
-  case MULT:
-    value = prev[0]->value * prev[1]->value;
-    break;
-  case NEG:
-    value = -prev[0]->value;
-    break;
-  case POW:
-    value = std::pow(prev[0]->value, prev[1]->value);
-  case NONE:
-    break;
-  }
-}
+//   switch (operation) {
+//   case ADD:
+//     value = prev[0]->value + prev[1]->value;
+//     break;
+//   case MULT:
+//     value = prev[0]->value * prev[1]->value;
+//     break;
+//   case RELU:
+//     value = relu(prev[0])->value;
+//     break;
+//   case NEG:
+//     value = -(prev[0]->value);
+//     break;
+//   case POW:
+//     value = std::pow(prev[0]->value, prev[1]->value);
+//   case NONE:
+//     break;
+//   }
+// }
+
 void Value::backpropagation() {
   switch (operation) {
   case ADD:
@@ -103,6 +109,10 @@ void Value::backpropagation() {
     prev[0]->gradient +=
         (prev[1]->value * std::pow(prev[0]->value, prev[1]->value - 1) *
          gradient);
+    break;
+  case RELU:
+    prev[0]->gradient += ((value > 0) * gradient);
+    break;
   case NONE:
     break;
   }

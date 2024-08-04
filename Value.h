@@ -16,7 +16,7 @@ public:
     return std::shared_ptr<Value>(new Value(valueIn));
   }
 
-  void forwardPass();
+  // void forwardPass();
 
   std::string getString(size_t indent = 0) const;
 
@@ -24,9 +24,13 @@ public:
 
   void setValue(double valueIn) { value = valueIn; }
 
+  double getGradient() const { return gradient; }
+
   void zeroGradients();
 
   void setGradientToOne() { gradient = 1; }
+
+  void setGradient(double gradientIn) { gradient = gradientIn; }
 
   // * Does not zero the gradients
   void backpropagation();
@@ -39,7 +43,7 @@ public:
   }
 
 private:
-  enum OPERATION { ADD, MULT, NEG, POW, NONE };
+  enum OPERATION { ADD, MULT, NEG, POW, RELU, NONE };
 
   Value(double valueIn);
   Value(double valueIn, const std::vector<ValuePtr> &prevIn,
@@ -57,6 +61,7 @@ private:
   friend ValuePtr operator*(const ValuePtr &lhs, const ValuePtr &rhs);
   friend ValuePtr operator-(const ValuePtr &x);
   friend ValuePtr operator^(ValuePtr lhs, ValuePtr rhs);
+  friend ValuePtr relu(const ValuePtr &x);
 }; // * class Value
 
 // ! ----------------- OPERATOR OVERLOADS -----------------
@@ -91,4 +96,9 @@ inline ValuePtr operator-(const ValuePtr &lhs, const ValuePtr &rhs) {
 inline std::ostream &operator<<(std::ostream &os, ValuePtr other) {
   os << other.get()->getString() << std::endl;
   return os;
+}
+
+inline ValuePtr relu(const ValuePtr &x) {
+  return std::shared_ptr<Value>(
+      new Value(fmax(-0.00001, x->value), {x}, Value::RELU));
 }
