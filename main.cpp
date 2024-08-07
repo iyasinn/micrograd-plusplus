@@ -1,4 +1,4 @@
-#include "Neuron.h"
+#include "Perceptron.h"
 // #include "Value.h"
 using namespace std;
 
@@ -15,44 +15,51 @@ double calculate_loss(vector<double> results, vector<double> targets) {
 
 int main() {
 
-  const auto a = Val(100);
-  const auto b = Val(25);
+  auto p = Perceptron(3, 2);
+  std::cout << p.call({1, 2, 3})[0]->getValue();
+  // for (size_t i = 0; i < p.getNeurons().size(); i++) {
+  //   cout << i << ": " << p.getNeurons()[i].call({1, 2, 3})[0]->getValue() <<
+  //   endl;
+}
 
-  auto c = a + b;
+// const auto a = Val(100);
+// const auto b = Val(25);
 
-  size_t len = 3;
+// auto c = a + b;
 
-  Neuron n(len);
-  vector<vector<double>> inputs = {
-      {2, 3, -1}, {3, -1, 0.5}, {0.5, 1, 1}, {1, 1, -1}};
+// size_t len = 3;
 
-  vector<double> targets = {1, -1, -1, 1};
+// Neuron n(len);
+// vector<vector<double>> inputs = {
+//     {2, 3, -1}, {3, -1, 0.5}, {0.5, 1, 1}, {1, 1, -1}};
 
-  vector<double> results = {};
+// vector<double> targets = {1, -1, -1, 1};
 
-  for (size_t i = 0; i < inputs.size(); i++) {
-    ValuePtr output = n.call(inputs[i]);
-    output->startBackpropagation();
-    results.push_back(output->getValue());
-  }
+// vector<double> results = {};
 
-  cout << calculate_loss(results, targets) << endl;
+// for (size_t i = 0; i < inputs.size(); i++) {
+//   ValuePtr output = n.call(inputs[i]);
+//   output->startBackpropagation();
+//   results.push_back(output->getValue());
+// }
 
-  // for (size_t i = 0; i < n.getWeights().size(); i++) {
-  //   cout << i << ": " << n.getWeights()[i]->getValue() << " "
-  //        << n.getWeights()[i]->getGradient() << endl;
-  // }
+// cout << calculate_loss(results, targets) << endl;
 
-  // cout << "\n\n\n" << output->getValue() << "\n\n\n";
+// for (size_t i = 0; i < n.getWeights().size(); i++) {
+//   cout << i << ": " << n.getWeights()[i]->getValue() << " "
+//        << n.getWeights()[i]->getGradient() << endl;
+// }
 
-  // output->startBackpropagation();
+// cout << "\n\n\n" << output->getValue() << "\n\n\n";
 
-  // cout << output->getValue() << endl;
+// output->startBackpropagation();
 
-  // for (size_t i = 0; i < n.getWeights().size(); i++) {
-  //   cout << n.getWeights()[i]->getValue() << " "
-  //        << n.getWeights()[i]->getGradient() << endl;
-  // }
+// cout << output->getValue() << endl;
 
-  // cout << output;
+// for (size_t i = 0; i < n.getWeights().size(); i++) {
+//   cout << n.getWeights()[i]->getValue() << " "
+//        << n.getWeights()[i]->getGradient() << endl;
+// }
+
+// cout << output;
 }
