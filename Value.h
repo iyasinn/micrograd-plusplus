@@ -8,6 +8,11 @@
 class Value;
 using ValuePtr = const std::shared_ptr<Value>;
 
+// Class that has member that pointers to a object
+// Multiple things can be shared pointers to the same object in memory
+
+// WHen all shared pointers die, then that object will aautomatically die
+
 class Value {
 
 public:
@@ -53,7 +58,8 @@ private:
 
   // * Member Variables
   double value;
-  double gradient;
+  double gradient; //  dL / dV
+  // Honeslty this should be a tupel of max size 2 -> vector of capacity 2
   std::vector<ValuePtr> prev = {};
   OPERATION operation = NONE;
 

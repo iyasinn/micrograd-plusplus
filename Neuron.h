@@ -6,6 +6,12 @@
 #include <random>
 #include <vector>
 
+// Perceptron -> Single Layer Neurons
+
+// MultiLayer PErceptron
+
+// Finally il lbe done -> Have a binary classes
+
 double generateRandomNumber(double minimum, double maximum) {
   // Seed with a real random value, if available
   std::random_device rd;
@@ -25,7 +31,7 @@ class Neuron {
 public:
   Neuron(size_t w) {
     for (size_t i = 0; i < w; i++) {
-      weights.push_back(Value::create(generateRandomNumber(-1.0, 1.0)));
+      weights.push_back(Value::create(generateRandomNumber(-1, 1)));
     }
   }
 
@@ -41,9 +47,12 @@ public:
       activation = activation + (weights[i] * Value::create(inputs[i]));
     }
 
+    activation = activation + Value::create(bias);
+
     return relu(activation);
   }
 
 private:
   std::vector<ValuePtr> weights;
+  double bias = generateRandomNumber(-1, 1);
 };
