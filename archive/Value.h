@@ -47,13 +47,13 @@ public:
     backpropagation();
   }
 
-private:
   enum OPERATION { ADD, MULT, NEG, POW, RELU, NONE };
 
-  Value(double valueIn);
-  Value(double valueIn, const std::vector<ValuePtr> &prevIn,
-        OPERATION operationIn);
+  Value(double valueIn) : value(valueIn), gradient(0), operation(NONE) {}
+  Value(double valueIn, const std::vector<ValuePtr> &prevIn, OPERATION operationIn)
+      : value(valueIn), gradient(0), prev(prevIn), operation(operationIn) {}
 
+private:
   std::string enumToString(OPERATION operationIn) const;
 
   // * Member Variables
@@ -84,7 +84,7 @@ inline ValuePtr operator*(const ValuePtr &lhs, const ValuePtr &rhs) {
 
 inline ValuePtr operator^(ValuePtr lhs, ValuePtr rhs) {
   return std::shared_ptr<Value>(
-      new Value(std::pow(lhs->value, rhs->value), {lhs, rhs}, Value::POW));
+      new Value(std::pow(lhs->value, rhs->value), std::vector<ValuePtr>{lhs, rhs}, Value::POW));
 }
 
 inline ValuePtr operator/(const ValuePtr &lhs, const ValuePtr &rhs) {

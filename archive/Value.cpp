@@ -4,11 +4,11 @@
 #include <sstream>
 #include <string>
 
-Value::Value(double valueIn, const std::vector<ValuePtr> &prevIn,
-             OPERATION operationIn)
-    : value(valueIn), prev(prevIn), operation(operationIn) {}
+// Value::Value(double valueIn, const std::vector<ValuePtr> &prevIn,
+//              OPERATION operationIn)
+//     : value(valueIn), prev(prevIn), operation(operationIn) {}
 
-Value::Value(double valueIn) : value(valueIn) {}
+// Value::Value(double valueIn) : value(valueIn) {}
 
 std::string Value::enumToString(OPERATION operationIn) const {
   switch (operationIn) {
