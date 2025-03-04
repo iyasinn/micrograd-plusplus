@@ -58,22 +58,21 @@ inline ValuePtr operator*(ValuePtr left, ValuePtr right) {
   output->prev.push_back(right);
 
   output->gradient_func = [output]() {
-    output->prev[0]->_gradient += output->prev[1]->_gradient;
-    output->prev[1]->_gradient += output->prev[0]->_gradient;
+    auto first = output->prev[0]; 
+    auto second = output->prev[1];
+    output->prev[0]->_gradient += (second->_value * output->_gradient);
+    output->prev[1]->_gradient += (first->_value * output->_gradient);
   };
 
   return output;
 }
 
-/// Computes the multiplicative inverse (1/x) of a Value
-/// @param value The input value to compute inverse for
-/// @throws std::invalid_argument if value is zero
-/// @return A new Value representing 1/value
+
 inline ValuePtr inverse(ValuePtr value) {
     if (value->_value == 0.0) {
         throw std::invalid_argument("Division by zero in inverse operation");
     }
-    
+
     auto output = create_value(1.0 / value->_value);
     output->prev.push_back(value);
     
@@ -82,6 +81,17 @@ inline ValuePtr inverse(ValuePtr value) {
         // We can use output->_value = 1/x to simplify computation
         double grad = -output->_value * output->_value * output->_gradient;
         output->prev[0]->_gradient += grad;
+    };
+    
+    return output;
+}
+
+inline ValuePtr relu(ValuePtr value) {
+    auto output = create_value(value->_value > 0 ? value->_value : 0.0);
+    output->prev.push_back(value);
+    
+    output->gradient_func = [output]() {
+        output->prev[0]->_gradient += (output->_value > 0 ? output->_gradient : 0.0);
     };
     
     return output;
