@@ -6,7 +6,7 @@ class Value;
 using ValuePtr = std::shared_ptr<Value>;
 
 inline ValuePtr create_value(double value) {
-  return std::make_shared<Value>(value);
+  return std::make_shared<Value>(value, 0.0);
 }
 
 class Value {
