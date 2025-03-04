@@ -87,3 +87,60 @@ TEST(ValueTest, ReluGradient) {
     d->gradient_func();
     EXPECT_DOUBLE_EQ(c->_gradient, 0.0);  // Negative input
 }
+
+TEST(ValueTest, SelfMultiplication) {
+    auto a = create_value(3.0);
+    auto b = a * a;  // b = a^2
+    EXPECT_DOUBLE_EQ(b->_value, 9.0);  // 3^2 = 9
+    
+    b->_gradient = 1.0;
+    b->gradient_func();
+    EXPECT_DOUBLE_EQ(a->_gradient, 6.0);  // d(a^2)/da = 2a = 2*3 = 6
+}
+
+TEST(ValueTest, SelfAddition) {
+    auto a = create_value(3.0);
+    auto b = a + a;  // b = 2a
+    EXPECT_DOUBLE_EQ(b->_value, 6.0);  // 3 + 3 = 6
+    
+    b->_gradient = 1.0;
+    b->gradient_func();
+    EXPECT_DOUBLE_EQ(a->_gradient, 2.0);  // d(a+a)/da = 2
+}
+
+TEST(ValueTest, ChainedOperations) {
+    auto a = create_value(2.0);
+    auto b = a * a;  // b = a^2
+    auto c = b * a;  // c = a^3
+    EXPECT_DOUBLE_EQ(c->_value, 8.0);  // 2^3 = 8
+    
+    c->_gradient = 1.0;
+    c->gradient_func();
+    b->gradient_func();
+    EXPECT_DOUBLE_EQ(a->_gradient, 12.0);  // d(a^3)/da = 3a^2 = 3*4 = 12
+}
+
+TEST(ValueTest, SelfSubtraction) {
+    auto a = create_value(3.0);
+    auto b = a - a;  // b = 0
+    EXPECT_DOUBLE_EQ(b->_value, 0.0);
+    
+    b->_gradient = 1.0;
+    b->gradient_func();
+    EXPECT_DOUBLE_EQ(a->_gradient, 0.0);  // d(a-a)/da = 0
+}
+
+TEST(ValueTest, ComplexExpression) {
+    // Testing (a * a + a) * a
+    auto a = create_value(2.0);
+    auto b = a * a;      // 4
+    auto c = b + a;      // 6
+    auto d = c * a;      // 12
+    EXPECT_DOUBLE_EQ(d->_value, 12.0);
+    
+    d->_gradient = 1.0;
+    d->gradient_func();
+    c->gradient_func();
+    b->gradient_func();
+    EXPECT_DOUBLE_EQ(a->_gradient, 10.0);  // d/da((a^2 + a)*a) = 3a^2 + a = 12 + 2 = 14
+}
