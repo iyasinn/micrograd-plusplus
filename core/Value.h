@@ -21,6 +21,24 @@ public:
   std::vector<ValuePtr> prev;
 };
 
+
+
+inline ValuePtr operator*(ValuePtr left, ValuePtr right) {
+
+  auto output = create_value(left->_value * right->_value);
+  output->prev.push_back(left);
+  output->prev.push_back(right);
+
+  output->gradient_func = [output]() {
+    auto first = output->prev[0]; 
+    auto second = output->prev[1];
+    output->prev[0]->_gradient += (second->_value * output->_gradient);
+    output->prev[1]->_gradient += (first->_value * output->_gradient);
+  };
+
+  return output;
+}
+
 inline ValuePtr operator-(ValuePtr value) {
 
   auto output = create_value(-1 * value->_value);
@@ -51,21 +69,6 @@ inline ValuePtr operator-(ValuePtr left, ValuePtr right) {
   return left + (-right);
 }
 
-inline ValuePtr operator*(ValuePtr left, ValuePtr right) {
-
-  auto output = create_value(left->_value * right->_value);
-  output->prev.push_back(left);
-  output->prev.push_back(right);
-
-  output->gradient_func = [output]() {
-    auto first = output->prev[0]; 
-    auto second = output->prev[1];
-    output->prev[0]->_gradient += (second->_value * output->_gradient);
-    output->prev[1]->_gradient += (first->_value * output->_gradient);
-  };
-
-  return output;
-}
 
 
 inline ValuePtr inverse(ValuePtr value) {
