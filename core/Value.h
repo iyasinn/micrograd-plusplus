@@ -14,6 +14,38 @@ public:
   Value(double value_in, double gradient_in)
       : _value(value_in), _gradient(gradient_in) {}
 
+
+  void zero_all_gradients() {
+    // TODO: Places to optimize -> Redundant zeros
+    // TODO: What if they all pointed to some memory that was zeroed out
+    _gradient = 0.0;
+    for (ValuePtr& ptr : prev){
+      ptr->zero_all_gradients();
+    }
+  }
+
+  void set_gradient_to_one() {
+    _gradient = 1.0;
+  }
+
+  void backpropagate(){
+    zero_all_gradients();
+    set_gradient_to_one();
+    _backpropagate();
+  }
+
+  void _backpropagate() {
+
+    if (gradient_func) {
+      gradient_func();
+    }
+    
+    for (auto & p : prev){
+      p->_backpropagate();
+    }
+
+  }
+
   double _value;
   double _gradient = 0;
   // void (*gradient_func)() = nullptr;
@@ -40,17 +72,33 @@ inline ValuePtr operator*(ValuePtr left, ValuePtr right) {
 }
 
 inline ValuePtr operator-(ValuePtr value) {
+  return value * create_value(-1.0);
 
-  auto output = create_value(-1 * value->_value);
-  output->prev.push_back(value);
+  
+  // auto output = create_value(-1 * value->_value);
+  // output->prev.push_back(value);
 
-  output->gradient_func = [output]() {
-    output->prev[0]->_gradient += (-1 * output->_gradient);
-  };
+  // output->gradient_func = [output]() {
+  //   output->prev[0]->_gradient += -1;
+  // };
 
-  return output;
+  // return output;
 }
 
+
+
+/*
+
+c = -1a
+dc/da = d/da(-1a)=-1
+
+a + b = c
+dc/da = da/da + db/da = 1 + 0 = 1
+so the gradient is changin by 1. 
+
+*/
+
+//* ADD Function
 inline ValuePtr operator+(ValuePtr left, ValuePtr right) {
 
   auto output = create_value(left->_value + right->_value);

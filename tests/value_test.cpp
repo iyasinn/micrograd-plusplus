@@ -125,8 +125,7 @@ TEST(ValueTest, SelfSubtraction) {
     auto b = a - a;  // b = 0
     EXPECT_DOUBLE_EQ(b->_value, 0.0);
     
-    b->_gradient = 1.0;
-    b->gradient_func();
+    b->backpropagate();
     EXPECT_DOUBLE_EQ(a->_gradient, 0.0);  // d(a-a)/da = 0
 }
 
@@ -138,9 +137,6 @@ TEST(ValueTest, ComplexExpression) {
     auto d = c * a;      // 12
     EXPECT_DOUBLE_EQ(d->_value, 12.0);
     
-    d->_gradient = 1.0;
-    d->gradient_func();
-    c->gradient_func();
-    b->gradient_func();
-    EXPECT_DOUBLE_EQ(a->_gradient, 10.0);  // d/da((a^2 + a)*a) = 3a^2 + a = 12 + 2 = 14
+    d->backpropagate();
+    EXPECT_DOUBLE_EQ(a->_gradient, 16.0);  // d/da((a^2 + a)*a) = 3a^2 + a = 12 + 2 = 14
 }
