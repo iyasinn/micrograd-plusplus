@@ -4,15 +4,6 @@
 #include <stdexcept>
 #include <vector>
 
-// need to take an umber and get from -1 to 1
-// -1
-/*
-
-    then map our number from 0 to 2
-
-
-*/
-
 class Neuron {
 public:
   Neuron(size_t number_of_inputs) {
@@ -27,12 +18,11 @@ public:
     }
   }
 
-  auto operator()(const std::vector<ValuePtr>& inputs) -> ValuePtr {
+  auto operator()(const std::vector<ValuePtr> &inputs) -> ValuePtr {
 
     if (inputs.size() != _weights.size()) {
       throw std::runtime_error("Invalid number of inputs");
     }
-
 
     ValuePtr activation = _bias;
 
@@ -41,10 +31,46 @@ public:
     }
 
     ValuePtr output = relu(activation);
-    return output; 
+    return output;
   }
 
 private:
   std::vector<ValuePtr> _weights;
   ValuePtr _bias;
+};
+
+class Layer {
+public:
+  Layer(size_t number_of_inputs, size_t number_of_outputs) {
+    _neurons.resize(number_of_outputs, Neuron(number_of_inputs));
+  }
+
+  auto operator()(const std::vector<ValuePtr> &inputs)
+      -> std::vector<ValuePtr> {
+    try {
+
+      std::vector<ValuePtr> outputs;
+      outputs.resize(_neurons.size());
+
+      for (size_t i = 0; i < _neurons.size(); i++) {
+        outputs[i] = _neurons[i](inputs);
+      }
+      return outputs;
+
+    } catch (std::runtime_error &e) {
+      throw std::runtime_error(e.what());
+    }
+  }
+
+private:
+  std::vector<Neuron> _neurons;
+};
+
+class MultiLayerPerceptron {
+public: 
+
+
+
+private: 
+
 };
