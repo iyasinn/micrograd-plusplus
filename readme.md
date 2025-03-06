@@ -48,6 +48,10 @@ std::vector<ValuePtr> input_values = {
 
 // Forward pass
 auto output = mlp(input_values);
+// Backpropagate
+output[0]->backpropagate();
+// Visualize 
+output[0]->visualize("neural_network");
 ```
 
 ## Architecture
