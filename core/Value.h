@@ -19,9 +19,9 @@ public:
 
   void backpropagate();
 
-  double get_value() const;
+  auto get_value() const -> double;
 
-  double get_gradient() const;
+  auto get_gradient() const -> double;
 
 private:
   void internal_backpropagate();
@@ -32,22 +32,22 @@ private:
   std::vector<ValuePtr> prev;
 
   // * Friend Functions
-  friend ValuePtr operator*(ValuePtr, ValuePtr);
-  friend ValuePtr operator+(ValuePtr, ValuePtr);
-  friend ValuePtr inverse(ValuePtr);
-  friend ValuePtr relu(ValuePtr);
+  friend auto operator*(ValuePtr, ValuePtr) -> ValuePtr;
+  friend auto operator+(ValuePtr, ValuePtr) -> ValuePtr;
+  friend auto inverse(ValuePtr) -> ValuePtr;
+  friend auto relu(ValuePtr) -> ValuePtr;
 };
 
-ValuePtr operator*(ValuePtr left, ValuePtr right);
+auto operator*(ValuePtr left, ValuePtr right) -> ValuePtr;
 
 // * ------------- Friend Operations ---------------
 
-ValuePtr operator-(ValuePtr value);
+auto operator-(ValuePtr value) -> ValuePtr;
 
-ValuePtr operator+(ValuePtr left, ValuePtr right);
+auto operator+(ValuePtr left, ValuePtr right) -> ValuePtr;
 
-ValuePtr operator-(ValuePtr left, ValuePtr right);
+auto operator-(ValuePtr left, ValuePtr right) -> ValuePtr;
 
-ValuePtr inverse(ValuePtr value);
+auto inverse(ValuePtr value) -> ValuePtr;
 
-ValuePtr relu(ValuePtr value);
+auto relu(ValuePtr value) -> ValuePtr;
