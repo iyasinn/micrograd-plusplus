@@ -17,4 +17,5 @@ int main() {
 
     std::cout << output[0]->get_value();
 
+    output[0]->visualize("cool_graph");
 }

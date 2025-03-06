@@ -7,9 +7,9 @@
 class Neuron {
 public:
   Neuron(size_t number_of_inputs) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_real_distribution<float> dis(-1.0F, 1.0F);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(-1.0F, 1.0F);
 
     _bias = create_value(dis(gen));
     _weights.resize(number_of_inputs);

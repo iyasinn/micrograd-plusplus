@@ -1,6 +1,8 @@
 #include <functional>
 #include <memory>
 #include <vector>
+#include <string>
+#include <sstream>
 
 class Value;
 using ValuePtr = std::shared_ptr<Value>;
@@ -23,8 +25,13 @@ public:
 
   auto get_gradient() const -> double;
 
+  // Visualization methods
+  auto to_dot() const -> std::string;
+  void visualize(const std::string& filename = "computation_graph") const;
+
 private:
   void internal_backpropagate();
+  void build_dot(std::stringstream& ss, std::vector<const Value*>& visited) const;
 
   double _value;
   double _gradient = 0;

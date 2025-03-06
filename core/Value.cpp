@@ -1,5 +1,9 @@
 #include "Value.h"
 #include <stdexcept>
+#include <sstream>
+#include <vector>
+#include <fstream>
+#include <algorithm>
 
 // * ------------- Member Functions ---------------
 void Value::zero_all_gradients() {
@@ -111,4 +115,55 @@ auto relu(ValuePtr value) -> ValuePtr {
   };
 
   return output;
+}
+
+auto Value::to_dot() const -> std::string {
+    std::stringstream ss;
+    ss << "digraph G {\n";
+    ss << "  rankdir=LR;\n";
+    ss << "  node [fontname=\"Arial\"];\n";
+    ss << "  edge [fontname=\"Arial\"];\n";
+    std::vector<const Value*> visited;
+    build_dot(ss, visited);
+    ss << "}\n";
+    return ss.str();
+}
+
+void Value::build_dot(std::stringstream& ss, std::vector<const Value*>& visited) const {
+    // Skip if already visited
+    if (std::find(visited.begin(), visited.end(), this) != visited.end()) {
+        return;
+    }
+    visited.push_back(this);
+
+    // Create a clean node ID
+    std::stringstream node_id;
+    node_id << "node_" << visited.size();
+
+    // Create node label with value and gradient
+    std::stringstream label;
+    label << "Value: " << _value << "\\nGrad: " << _gradient;
+    
+    // Add node with styling
+    ss << "  " << node_id.str() << " [label=\"" << label.str() 
+       << "\", shape=box, style=filled, fillcolor=lightblue];\n";
+
+    // Add edges to previous nodes
+    for (const auto& prev_value : prev) {
+        std::stringstream prev_id;
+        prev_id << "node_" << std::find(visited.begin(), visited.end(), prev_value.get()) - visited.begin() + 1;
+        ss << "  " << node_id.str() << " -> " << prev_id.str() << ";\n";
+        prev_value->build_dot(ss, visited);
+    }
+}
+
+void Value::visualize(const std::string& filename) const {
+    // Generate DOT file
+    std::ofstream dot_file(filename + ".dot");
+    dot_file << to_dot();
+    dot_file.close();
+
+    // Generate PNG using dot command
+    std::string command = "dot -Tpng " + filename + ".dot -o " + filename + ".png";
+    system(command.c_str());
 }
