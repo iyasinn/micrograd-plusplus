@@ -6,6 +6,10 @@ add_executable(${PROJECT_NAME} main.cpp)
 add_library(value core/Value.cpp)
 target_link_libraries(${PROJECT_NAME} value)
 
+add_library(neuron core/Neuron.cpp)
+target_link_libraries(${PROJECT_NAME} neuron)
+target_link_libraries(neuron PUBLIC value)
+
 # For testing value
 # add_executable(test_value test_value.cpp)
 # target_link_libraries(test_value value)
