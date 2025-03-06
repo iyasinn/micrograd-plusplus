@@ -22,10 +22,10 @@ void Value::backpropagate() {
 }
 
 
-double Value::get_value() const { return _value; }
+auto Value::get_value() const -> double { return _value; }
 
 
-double Value::get_gradient() const { return _gradient; }
+auto Value::get_gradient() const -> double { return _gradient; }
 
 
 void Value::internal_backpropagate() {
@@ -42,7 +42,7 @@ void Value::internal_backpropagate() {
 
 // * ------------- Operator Functions ---------------
 
-ValuePtr operator*(ValuePtr left, ValuePtr right) {
+auto operator*(ValuePtr left, ValuePtr right) -> ValuePtr {
 
   auto output = create_value(left->get_value() * right->get_value());
   output->prev.push_back(left);
@@ -59,10 +59,10 @@ ValuePtr operator*(ValuePtr left, ValuePtr right) {
 }
 
 
-ValuePtr operator-(ValuePtr value) { return value * create_value(-1.0); }
+auto operator-(ValuePtr value) -> ValuePtr { return value * create_value(-1.0); }
 
 
-ValuePtr operator+(ValuePtr left, ValuePtr right) {
+auto operator+(ValuePtr left, ValuePtr right) -> ValuePtr {
 
   auto output = create_value(left->_value + right->_value);
   output->prev.push_back(left);
@@ -77,12 +77,12 @@ ValuePtr operator+(ValuePtr left, ValuePtr right) {
 }
 
 
-ValuePtr operator-(ValuePtr left, ValuePtr right) {
+auto operator-(ValuePtr left, ValuePtr right) -> ValuePtr {
   return left + (-right);
 }
 
 
-ValuePtr inverse(ValuePtr value) {
+auto inverse(ValuePtr value) -> ValuePtr {
   if (std::abs(value->_value) < 0.0001) {
     throw std::invalid_argument("Division by zero in inverse operation");
   }
@@ -101,7 +101,7 @@ ValuePtr inverse(ValuePtr value) {
 }
 
 
-ValuePtr relu(ValuePtr value) {
+auto relu(ValuePtr value) -> ValuePtr {
   auto output = create_value(value->_value > 0 ? value->_value : 0.0);
   output->prev.push_back(value);
 
