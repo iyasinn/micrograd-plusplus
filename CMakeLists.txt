@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.22.1)
 project(micrograd_plusplus)
 
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_executable(${PROJECT_NAME} main.cpp)
 
 add_library(value core/Value.cpp)
@@ -21,11 +24,8 @@ target_link_libraries(neuron PUBLIC value)
 # add_library(lib DYNAMIC Value.cpp) What does it mean
 # Cmake makes executables and libraries
 
-
-
 # GoogleTest requires at least C++14
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 
 include(FetchContent)
 FetchContent_Declare(

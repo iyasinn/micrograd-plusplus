@@ -41,8 +41,8 @@ private:
 
 class Layer {
 public:
-  Layer(size_t number_of_inputs, size_t number_of_outputs) {
-    _neurons.resize(number_of_outputs, Neuron(number_of_inputs));
+  Layer(size_t number_of_inputs, size_t number_of_neurons) {
+    _neurons.resize(number_of_neurons, Neuron(number_of_inputs));
   }
 
   auto operator()(const std::vector<ValuePtr> &inputs)
@@ -67,10 +67,34 @@ private:
 };
 
 class MultiLayerPerceptron {
-public: 
+public:
+  MultiLayerPerceptron(size_t number_of_inputs,
+                       const std::vector<size_t> &layer_sizes) : _number_of_inputs(number_of_inputs) {
+    
+    _layers.push_back(Layer(number_of_inputs, layer_sizes[0]));
 
+    for (size_t i = 1; i < layer_sizes.size(); i++) {
+      _layers.push_back(Layer(layer_sizes[i - 1], layer_sizes[i]));
+    }
+  }
 
+  std::vector<ValuePtr> operator()(const std::vector<ValuePtr>& inputs) {
+    if (inputs.size() != _number_of_inputs) {
+        throw std::runtime_error("Input size mismatch");
+    }
 
-private: 
+    // Store the actual vector, but we only do this once
+    std::vector<ValuePtr> current = _layers[0](inputs);
 
+    // Modify current in place
+    for (size_t i = 1; i < _layers.size(); ++i) {
+        current = std::move(_layers[i](current));  // Use move semantics
+    }
+
+    return current;  // Will likely be moved by compiler
+  }
+
+private:
+  size_t _number_of_inputs;
+  std::vector<Layer> _layers;
 };
