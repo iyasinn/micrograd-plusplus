@@ -12,6 +12,7 @@ MemoryArena::~MemoryArena() { std::free(buffer); }
 
 void *MemoryArena::push(u64 size, u64 align) {
 
+  // This is a power of 2 alignment
   u64 aligned_pos = (pos + align - 1) & ~(align - 1);
 
   // Out of memory
@@ -35,6 +36,7 @@ void *MemoryArena::push_zero(u64 size, u64 align) {
 void MemoryArena::pop(u64 size) {
   if (size > pos) {
     pos = 0;
+    return;
   }
   pos -= size;
 }
@@ -44,7 +46,7 @@ void MemoryArena::clear() { pos = 0; }
 u64 MemoryArena::get_pos() const { return pos; }
 
 void MemoryArena::set_pos(u64 new_pos) {
-  if (pos <= capacity) {
+  if (new_pos <= capacity) {
     pos = new_pos;
   }
 }
