@@ -22,11 +22,21 @@ target_link_libraries(
   neuron
 )
 
+add_executable(
+  arena_test
+  arena_test.cpp
+)
 
+target_link_libraries(
+  arena_test
+  GTest::gtest_main
+  arena
+)
 
 include(GoogleTest)
 gtest_discover_tests(value_test)
 gtest_discover_tests(neuron_test)
+gtest_discover_tests(arena_test)
 
 # include(FetchContent)
 # FetchContent_Declare(
