@@ -13,6 +13,8 @@ add_library(neuron core/Neuron.cpp)
 target_link_libraries(${PROJECT_NAME} neuron)
 target_link_libraries(neuron PUBLIC value)
 
+add_library(arena core/Arena/Arena.cpp)
+
 # For testing value
 # add_executable(test_value test_value.cpp)
 # target_link_libraries(test_value value)
